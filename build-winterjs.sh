@@ -16,7 +16,7 @@ rustc --version
 cargo --version
 git clone --depth=1 --branch="$PKG_VERSION" https://github.com/wasmerio/winterjs
 cd winterjs
-cargo build --profile release-compact
+cargo build --release
 BIN_PATH=$(find ./target/release -executable -type f -name winterjs | head -n 1)
 echo "Testing the built binary"
 [ -x "$BIN_PATH" ]
