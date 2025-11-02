@@ -11,13 +11,14 @@ RUST_TARGET="clang -dumpmachine"
 PKG_VERSION="main"
 RELEASE_DIR="/tmp/hosttmp/winterjs_deb"
 curl -L -o rustup-install.sh https://sh.rustup.rs
-sh rustup-install.sh -y --default-toolchain 1.90.0
+sh rustup-install.sh -y --default-toolchain 1.90
 . $HOME/.cargo/env
 rustc --version
 cargo --version
 git clone --depth=1 --branch="$PKG_VERSION" https://github.com/wasmerio/winterjs
 cd winterjs
 PKG_COMMIT="$(git log --oneline -1 | cut -d \  -f 1 | head -n 1)"
+echo "1.90" | tee ./rust-toolchain
 cargo build --release
 BIN_PATH=$(find ./target/release -executable -type f -name winterjs | head -n 1)
 echo "Testing the built binary"
