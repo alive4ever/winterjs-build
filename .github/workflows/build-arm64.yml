@@ -1,0 +1,38 @@
+name: Building winterjs for arm64 linux
+run-name: ${{ github.actor }} is building winterjs for arm64 linux
+on:
+  push:
+    tags:
+      - '*'
+permissions:
+  contents: write
+
+jobs:
+  build-for-arm64:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Preparing repository
+        uses: actions/checkout@v4
+      - name: Preparing arm64 chroot
+        id: preparing-arm64-chroot
+        run: |
+          sh ${{ github.workspace }}/prepare-host-package.sh
+      - name: Building winterjs for arm64 linux
+        id: building_winterjs_arm64_linux
+        run: |
+          cp -v ${{ github.workspace }}/prepare-build-chroot.sh /tmp/
+          cp -v ${{ github.workspace }}/build-winterjs.sh /tmp/
+          cp -v ${{ github.workspace }}/packages.txt /tmp/
+          sudo systemd-nspawn --bind /tmp:/tmp/hosttmp --bind-ro /etc/resolv.conf --hostname localhost --machine arm64-debian -- sh /tmp/hosttmp/prepare-build-chroot.sh
+          sudo systemd-nspawn --bind /tmp:/tmp/hosttmp --bind-ro /etc/resolv.conf --hostname localhost --machine arm64-debian --user builder -- sh /tmp/hosttmp/build-winterjs.sh
+      - name: Uploading artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-package
+          path: /tmp/winterjs_deb/
+      - name: Creating release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            /tmp/winterjs_deb/*
