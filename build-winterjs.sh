@@ -15,6 +15,10 @@ sh rustup-install.sh -y --default-toolchain 1.90
 . $HOME/.cargo/env
 rustc --version
 cargo --version
+git clone https://github.com/nvm-sh/nvm ~/.nvm
+[ -d ~/.nvm ] && . ~/.nvm/nvm.sh
+nvm install --lts
+node --version
 git clone --depth=1 --branch="$PKG_VERSION" https://github.com/wasmerio/winterjs
 cd winterjs
 PKG_COMMIT="$(git log --oneline -1 | cut -d \  -f 1 | head -n 1)"
