@@ -12,6 +12,7 @@ clang --version
 export CC="sccache clang"
 export CXX="sccache clang++"
 export RUST_WRAPPER="sccache"
+export RUST_BACKTRACE=1
 PYTHON_VERSION=3.11
 RUST_TARGET="$($CC -dumpmachine)"
 PKG_VERSION="main"
