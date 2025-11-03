@@ -1,13 +1,19 @@
 set -e
 HOME=/home/$(whoami)
 cd $HOME
+[ -d $HOME/.local/bin ] || mkdir -p $HOME/.local/bin
+[ -f /etc/skel/.profile ] && . /etc/skel/.profile
 START_TIME=$(date -u +%s.%N)
 CLANG_VERSION=20
 CLANG_BASE="/usr/lib/llvm-$CLANG_VERSION"
 export LIBCLANG_PATH="$CLANG_BASE/lib"
 PATH="$CLANG_BASE/bin:$PATH"
 clang --version
-RUST_TARGET="clang -dumpmachine"
+export CC="sccache clang"
+export CXX="sccache clang++"
+export RUST_WRAPPER="sccache"
+PYTHON_VERSION=3.11
+RUST_TARGET="$($CC -dumpmachine)"
 PKG_VERSION="main"
 RELEASE_DIR="/tmp/hosttmp/winterjs_deb"
 curl -L -o rustup-install.sh https://sh.rustup.rs
@@ -18,6 +24,15 @@ cargo --version
 git clone https://github.com/nvm-sh/nvm ~/.nvm
 [ -d ~/.nvm ] && . ~/.nvm/nvm.sh
 nvm install --lts
+curl -L -o uv-install.sh https://astral.sh/uv/install.sh
+sh uv-install.sh
+uv --version
+uv python install "$PYTHON_VERSION"
+python"$PYTHON_VERSION" --version
+uv venv
+. ./.venv/bin/activate
+uv pip install -U setuptools pip
+pip --version
 node --version
 git clone --depth=1 --branch="$PKG_VERSION" https://github.com/wasmerio/winterjs
 cd winterjs
