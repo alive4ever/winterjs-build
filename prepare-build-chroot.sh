@@ -1,6 +1,6 @@
 set -e
 export DEBIAN_FRONTEND="noninteractive"
-DEBIAN_CODENAME="trixie"
+DEBIAN_CODENAME="bookworm"
 echo "deb http://apt.llvm.org/$DEBIAN_CODENAME/ llvm-toolchain-$DEBIAN_CODENAME-20 main" > /etc/apt/sources.list.d/llvm.list
 curl -sSL https://apt.llvm.org/llvm-snapshot.gpg.key | sudo dd of=/etc/apt/trusted.gpg.d/apt.llvm.org.asc
 apt-get update
